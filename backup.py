@@ -4,35 +4,43 @@ import shutil as backup
 
 
 def menu():
-    menu_items = ['Standard Backup', 'Backup/Compress', ]
+    option_provided = False
+    menu_items = ['Exit', 'Standard Backup', 'Backup/Compress', ]
     print(len(menu_items))
     print("JDS Designs - Backup Script v1")
 
-    i = 1
+    i = 0
     for item in menu_items:    
         print(f'{i}. {item}')
         i+=1
-    user_selection = input("Please select an option: ")
-
-    if user_selection == '1':
-        return '1'
-
-    if user_selection == '2':
-        return '2'
+    
+    while not option_provided:
+        try:
+            user_selection = input("Please select an option: ")
+            if user_selection == '1':
+                return '1'
+            if user_selection == '2':
+                return '2'
+            if user_selection == '0':
+                return '0'
+        except ValueError:
+            print("Please enter a value")
 
 # Backup Logic
 def standard_backup(src, dst):
     print("Packup in progress...")
-    backup.copyfile(src, dst)
+# handle the error returned if specified file is not found    
+    try:
+        backup.copyfile(src, dst)
+    except FileNotFoundError:
+        print("Sorry... file not found")
 
-    
-
-## Backup data logic -- this is the logic that will ask the user for input prior to calling the backup function and sending the required file path
-def standard_backup_setup():
+def get_source():
     #  ask user for file they would like to back up and store in variable a
     a = input("Please enter the location of the file you would like to back up: ")
     # convert to path object to be checked by Path
     path = Path(a)
+    
     # determine if it is file
     if path.is_file():
         is_right_file = 0
@@ -45,31 +53,69 @@ def standard_backup_setup():
                 is_right_file = 1
             # else print please retry and loop
             else:
-                user_selection = input("Would you like to (R)etry or (E)xit?(R/E): ")
+                user_selection = input("Would you like to (R)etry or (E)xit to main menu?(R/E): ")
                 if user_selection == 'E':
                     return()
 
     else:
         # displays to user that file provided was incorrect
-        print("Invalid file")
+        print("Invalid file") 
 
-    standard_backup(path, dst = 0)
+    return(path)   
 
+def get_dst():
+        #  ask user for file they would like to back up and store in variable a
+    a = input("Please enter the location you would like to back up to: ")
+    # convert to path object to be checked by Path
+    path = Path(a)
+    
+    # determine if it is file
+    if path.is_dir():
+        is_right_file = 0
+        while is_right_file == 0:
+            # Ask user to confirm backup to validate it is the correct file
+            user_selection = input(f"Please confirm if you would like to backup file to location:  {path}  (Y/N):")
+            # if the user confirms its the correct file
+            # assign flag to 1
+            if user_selection == "Y":
+                is_right_file = 1
+            # else print please retry and loop
+            else:
+                user_selection = input("Would you like to (R)etry or (E)xit to main menu?(R/E): ")
+                if user_selection == 'E':
+                    return()
 
-## implement compression backup
+    else:
+        # displays to user that file provided was incorrect
+        print("Invalid directory") 
+
+    return path
+
+## Backup data logic -- this is the logic that will ask the user for input prior to calling the backup function and sending the required file path
+def standard_backup_setup():
+    src = get_source()
+    dst = get_dst()
+    print(src)
+    print(dst)
+    standard_backup(src, dst)
+
+## implement compression backup - in progress
 def compress_backup():
     print("You chose to backup and compress")
 
-
-
 def main():
-    user_selection = menu()
-    match  int(user_selection):
-        case 1:
-            standard_backup_setup()
-        case 2:
-            compress_backup()
-
+    running = True
+    while running:
+        user_selection = menu()
+        match  int(user_selection):
+            case 1:
+                standard_backup_setup()
+            case 2:
+                compress_backup()
+            case 0:
+                print("Exiting System")
+                running = False
+                exit()    
 
 if __name__ == '__main__':
     main()
