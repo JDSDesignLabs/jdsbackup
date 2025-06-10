@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 import shutil as backup
 
@@ -27,10 +26,11 @@ def menu():
 
 # Backup Logic
 def standard_backup(src, dst):
-    print("Packup in progress...")
+    print("Backup in progress...")
 # handle the error returned if specified file is not found    
     try:
         backup.copyfile(src, dst)
+        print("Backup Succcessful")
     except FileNotFoundError:
         print("File not found")
 
@@ -68,10 +68,41 @@ def get_source():
 
 def get_dst(src):
     dst =  str(src) + '.backup'
-    print(dst)
+    # split given source file location by \ delimiter
+    file_name_split = dst.split("\\")
+    # get filename
+    file_name = file_name_split[len(file_name_split) - 1]
+    print(f"Current backup location: {dst}")
     user_selection = input("Would you like to set a custom backup location?(Y/N): ")
     if user_selection == 'Y':
-        print("Please enter")
+        valid_path = False
+        while not valid_path:
+        #  ask user for file location they would like to back up to and store in variable a
+            a = input("Please enter the location you would like to back up to: ")
+            # convert to path object to be checked by Path methods
+            path = Path(a)
+            # determine if it is a legit directory
+            if path.is_dir():
+                is_right_file = 0
+                while is_right_file == 0:
+                    # Ask user to confirm backup to validate it is the correct file
+                    user_selection = input(f"Please confirm if the following backup location / filename is correct:  {str(path)}\{file_name}  (Y/N):")
+                    # if the user confirms its the correct file
+                        # assign flag to 1
+                    if user_selection == "Y":
+                        is_right_file = 1
+                        valid_path = True
+                        return(str(path) +"\\" + str(file_name))
+                    # else print please retry and loop
+                    else:
+                        user_selection = input("Would you like to (R)etry or (E)xit to main menu?(R/E): ")
+                        if user_selection == 'E':
+                            return()
+        else:
+            # displays to user that file provided was incorrect
+            print("Invalid file")
+            return(path) 
+
     elif user_selection == 'N':
         return dst
 
