@@ -1,5 +1,8 @@
 from pathlib import Path
 import shutil as backup
+from tkinter import *
+from tkinter import ttk
+
 
 
 def menu():
@@ -8,7 +11,7 @@ def menu():
     print("JDS Designs - Backup Script v1")
 
     i = 0
-    for item in menu_items:    
+    for item in menu_items:
         print(f'{i}. {item}')
         i+=1
     
@@ -43,7 +46,7 @@ def get_source():
         a = input("Please enter the location of the file you would like to back up: ")
         # convert to path object to be checked by Path
         path = Path(a)
-            # determine if it is file
+        # determine if it is file
         if path.is_file():
             is_right_file = 0
             while is_right_file == 0:
@@ -116,7 +119,10 @@ def standard_backup_setup():
 def compress_backup():
     print("You chose to backup and compress")
 
+
+
 def main():
+    # execute code via terminal window to test
     running = True
     while running:
         user_selection = menu()
