@@ -161,31 +161,27 @@ class BackupSystem:
                     backup.copyfile(src, dst)
                     backup_complete.set("Backup Complete.")
                 except FileNotFoundError:
-                    backup_complete.set("File Not Found.")
-
-# set up the window
-root=Tk()
-BackupSystem(root)
-root.mainloop()      
+                    backup_complete.set("File Not Found.")     
 
 
 def main():
-    # Call window creation command
-    #create_window()
-
+    # set up the window
+    root=Tk()
+    BackupSystem(root)
+    root.mainloop() 
     # execute code via terminal window to test
-    running = True
-    while running:
-        user_selection = menu()
-        match  int(user_selection):
-            case 1:
-                standard_backup_setup()
-            case 2:
-                compress_backup()
-            case 0:
-                print("Exiting System")
-                running = False
-                exit()    
+    #running = True
+    #while running:
+    #    user_selection = menu()
+    #    match  int(user_selection):
+    #        case 1:
+    #           standard_backup_setup()
+    #        case 2:
+    #           compress_backup()
+    #       case 0:
+    #           print("Exiting System")
+    #           running = False
+    #           exit()    
 
 if __name__ == '__main__':
     main()
