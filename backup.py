@@ -52,7 +52,7 @@ def main():
     # set up the window
     root=Tk()
     BackupSystem(root)
-    root.mainloop() 
+    root.mainloop()
 
 if __name__ == '__main__':
     main()
