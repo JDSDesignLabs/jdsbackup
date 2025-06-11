@@ -23,7 +23,7 @@ class BackupSystem:
 
             # Shows the provided file location given exists
             backup_complete=StringVar()
-            ttk.Label(mainframe, textvariable=backup_complete).grid(column=4, row=1, sticky=(W,E))
+            ttk.Label(mainframe, textvariable=backup_complete).grid(column=1, row=4, sticky=(W,E))
             
             
 
@@ -32,11 +32,11 @@ class BackupSystem:
             ttk.Label(mainframe, text="Destination: ").grid(column=1, row=2, sticky=W)
             
             # Create buttons
-            ttk.Button(mainframe, text="Select Source", command=lambda: select_file()).grid(column=4, row=1, sticky=W)
-            ttk.Button(mainframe, text="Select Destination", command=lambda: select_directory()).grid(column=4, row=2, sticky=W)
-            ttk.Button(mainframe, text="Backup", command=lambda: standard_backup(backup_src.get(), backup_dst.get())).grid(column=1, row=3, sticky=W)
-            ttk.Button(mainframe, text="Scheduled Backup", command=lambda: standard_backup(backup_src.get(), backup_dst.get())).grid(column=3, row=3, sticky=W)
-            ttk.Button(mainframe, text="Incremental Backup", command=lambda: standard_backup(backup_src.get(), backup_dst.get())).grid(column=4, row=3, sticky=W)
+            filename = ttk.Button(mainframe, text="Select Source", command=lambda: select_file()).grid(column=4, row=1, sticky=W)
+            ttk.Button(mainframe, text="Select Destination", command=lambda: select_directory(filename)).grid(column=4, row=2, sticky=W)
+            ttk.Button(mainframe, text="Backup", command=lambda: perform_backup(backup_src.get(), backup_dst.get(), backup_type = 'n')).grid(column=1, row=3, sticky=W)
+            ttk.Button(mainframe, text="Scheduled Backup", command=lambda: perform_backup(backup_src.get(), backup_dst.get(), backup_type = 's')).grid(column=3, row=3, sticky=W)
+            ttk.Button(mainframe, text="Incremental Backup", command=lambda: perform_backup(backup_src.get(), backup_dst.get(), backup_type = 'i')).grid(column=4, row=3, sticky=W)
 
             
             for child in mainframe.winfo_children():
@@ -46,22 +46,29 @@ class BackupSystem:
 
             def select_file():
                 filename = filedialog.askopenfilename()
-                backup_src.set(filename) 
+                backup_src.set(filename)
 
-            def select_directory():
+            def select_directory(filename):
                 directoryname = filedialog.askdirectory()
-                backup_dst.set(directoryname)
+                filename = str(backup_src.get()) +'.backup'
+                filename = filename.split('/')
+                backup_dst.set(directoryname + "/" + filename[len(filename) - 1])
                  
 
             # Backup Logic
-            def standard_backup(src, dst):
+            def perform_backup(src, dst, backup_type):
                 print("Backup in progress...")
             # handle the error returned if specified file is not found    
-                try:
-                    backup.copyfile(src, dst)
-                    backup_complete.set("Backup Complete.")
-                except FileNotFoundError:
-                    backup_complete.set("File Not Found.")     
+                if backup_type == 'n':
+                    try:
+                        backup.copyfile(src, dst)
+                        backup_complete.set("Backup Complete.")
+                    except FileNotFoundError:
+                        backup_complete.set("File Not Found.")     
+                elif backup_type == 's':
+                    print("Scheduled backup")
+                elif backup_type == 'i':
+                    print("incremental backup")
 
 def main():
     # set up the window
